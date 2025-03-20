@@ -15,6 +15,16 @@ try {
   // The database is accessed from runtime.env.DB
   const db = Astro.locals?.runtime?.env?.DB;
   if (db) {
+    // First ensure the table exists
+    await db.prepare(`
+      CREATE TABLE IF NOT EXISTS items (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT,
+        description TEXT
+      )
+    `).run();
+    
+    // Then fetch the items
     const response = await db.prepare("SELECT * FROM items").all();
     items = response.results || [];
   } else {
