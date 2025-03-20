@@ -1,4 +1,5 @@
 import type { APIContext } from 'astro';
+import { verifyAuth, unauthorizedResponse } from '../../utils/auth';
 
 interface CloudflareLocals {
   runtime: {
@@ -9,6 +10,11 @@ interface CloudflareLocals {
 }
 
 export async function GET({ locals, request }: APIContext & { locals: CloudflareLocals }) {
+  // Check authentication
+  if (!verifyAuth(request)) {
+    return unauthorizedResponse();
+  }
+  
   const testResults = {
     setup: { success: false, message: '' },
     createTest: { success: false, message: '', id: null },

@@ -1,9 +1,21 @@
 ---
 import Layout from '../layouts/Layout.astro';
+
+// Get the auth parameter to add to links
+const authParam = Astro.url.searchParams.get('auth') || '';
+const isAuthenticated = !!authParam;
 ---
+
 <Layout title="Cloudflare Items Manager">
   <div class="container mx-auto px-4 py-8">
-    <h1 class="text-4xl font-bold text-blue-600 mb-6">Cloudflare D1 Demo</h1>
+    <header class="flex justify-between items-center mb-6">
+      <h1 class="text-4xl font-bold text-blue-600">Cloudflare D1 Demo</h1>
+      {isAuthenticated ? (
+        <a href="/login" class="text-red-600 hover:text-red-800">Logout</a>
+      ) : (
+        <a href="/login" class="text-indigo-600 hover:text-indigo-800">Login</a>
+      )}
+    </header>
     
     <div class="bg-white shadow-md rounded-lg p-6">
       <h2 class="text-2xl font-semibold text-gray-800 mb-4">Welcome to the D1 Items Manager</h2>
@@ -12,13 +24,21 @@ import Layout from '../layouts/Layout.astro';
       </p>
       
       <div class="space-y-4">
-        <a href="/items" class="block w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 px-4 rounded-md text-center transition-colors">
-          Go to Items Manager
-        </a>
-        
-        <a href="/api/test-items" class="block w-full bg-green-600 hover:bg-green-700 text-white font-medium py-3 px-4 rounded-md text-center transition-colors">
-          Run CRUD Tests
-        </a>
+        {isAuthenticated ? (
+          <>
+            <a href={`/items?auth=${authParam}`} class="block w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 px-4 rounded-md text-center transition-colors">
+              Go to Items Manager
+            </a>
+            
+            <a href={`/api/test-items?auth=${authParam}`} class="block w-full bg-green-600 hover:bg-green-700 text-white font-medium py-3 px-4 rounded-md text-center transition-colors">
+              Run CRUD Tests
+            </a>
+          </>
+        ) : (
+          <div class="bg-blue-50 border border-blue-200 text-blue-800 p-4 rounded-md">
+            <p>Please <a href="/login" class="font-medium underline">login</a> to access the Items Manager.</p>
+          </div>
+        )}
       </div>
     </div>
   </div>

@@ -1,4 +1,5 @@
 import type { APIContext } from 'astro';
+import { verifyAuth, unauthorizedResponse } from '../../utils/auth';
 
 interface CloudflareLocals {
   runtime: {
@@ -15,7 +16,12 @@ interface Item {
 }
 
 // GET all items
-export async function GET({ locals }: APIContext & { locals: CloudflareLocals }) {
+export async function GET({ locals, request }: APIContext & { locals: CloudflareLocals }) {
+  // Check authentication
+  if (!verifyAuth(request)) {
+    return unauthorizedResponse();
+  }
+  
   try {
     const { results } = await locals.runtime.env.DB.prepare("SELECT * FROM items").all();
     
@@ -40,6 +46,11 @@ export async function GET({ locals }: APIContext & { locals: CloudflareLocals })
 
 // POST - create a new item
 export async function POST({ request, locals }: APIContext & { locals: CloudflareLocals }) {
+  // Check authentication
+  if (!verifyAuth(request)) {
+    return unauthorizedResponse();
+  }
+  
   try {
     const item: Item = await request.json();
     
@@ -84,6 +95,11 @@ export async function POST({ request, locals }: APIContext & { locals: Cloudflar
 
 // PUT - update an existing item
 export async function PUT({ request, locals }: APIContext & { locals: CloudflareLocals }) {
+  // Check authentication
+  if (!verifyAuth(request)) {
+    return unauthorizedResponse();
+  }
+  
   try {
     const item: Item = await request.json();
     
@@ -128,6 +144,11 @@ export async function PUT({ request, locals }: APIContext & { locals: Cloudflare
 
 // DELETE - delete an item
 export async function DELETE({ request, locals }: APIContext & { locals: CloudflareLocals }) {
+  // Check authentication
+  if (!verifyAuth(request)) {
+    return unauthorizedResponse();
+  }
+  
   try {
     const url = new URL(request.url);
     const id = url.searchParams.get('id');

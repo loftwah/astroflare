@@ -1,5 +1,12 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import { verifyAuth, redirectToLogin } from '../utils/auth';
+
+// Check for authentication
+const isAuthenticated = verifyAuth(Astro.request);
+if (!isAuthenticated) {
+  return redirectToLogin();
+}
 
 // Get all items from the database
 let items = [];
@@ -16,6 +23,9 @@ try {
 } catch (error) {
   console.error('Error fetching items:', error);
 }
+
+// Get the auth parameter for passing to API calls
+const authParam = new URL(Astro.request.url).searchParams.get('auth') || '';
 ---
 
 <Layout title="Items Manager">
@@ -23,7 +33,10 @@ try {
     <header class="bg-white shadow rounded-lg mb-6 p-4">
       <h1 class="text-3xl font-bold text-gray-800">Items Manager</h1>
       <p class="text-gray-600">Manage your items database</p>
-      <a href="/" class="inline-block mt-2 text-indigo-600 hover:text-indigo-800">← Back to Home</a>
+      <div class="flex justify-between mt-2">
+        <a href={`/?auth=${authParam}`} class="inline-block text-indigo-600 hover:text-indigo-800">← Back to Home</a>
+        <a href="/login" class="inline-block text-red-600 hover:text-red-800">Logout</a>
+      </div>
     </header>
 
     <!-- Add Item Form -->
@@ -112,7 +125,7 @@ try {
     <div id="toast" class="hidden fixed bottom-4 right-4 px-4 py-3 rounded-md text-white transition-opacity"></div>
   </div>
 
-  <script>
+  <script define:vars={{ authParam }}>
     // DOM Elements
     const itemForm = document.getElementById('itemForm') as HTMLFormElement;
     const itemsList = document.getElementById('itemsList');
@@ -123,6 +136,12 @@ try {
     const editDescription = document.getElementById('editDescription') as HTMLTextAreaElement;
     const cancelEdit = document.getElementById('cancelEdit');
     const toast = document.getElementById('toast');
+
+    // Authentication headers for API calls
+    const authHeaders = {
+      'Authorization': `Bearer ${authParam}`,
+      'Content-Type': 'application/json'
+    };
 
     // Show Toast Notification
     function showToast(message: string, isError = false) {
@@ -140,7 +159,16 @@ try {
     // Fetch all items
     async function fetchItems() {
       try {
-        const response = await fetch('/api/items');
+        const response = await fetch('/api/items', {
+          headers: authHeaders
+        });
+        
+        // Check for authentication error
+        if (response.status === 401) {
+          window.location.href = '/login?error=true';
+          return;
+        }
+        
         const data = await response.json();
         
         if (data.success) {
@@ -237,8 +265,15 @@ try {
             
             try {
               const response = await fetch(`/api/items?id=${id}`, {
-                method: 'DELETE'
+                method: 'DELETE',
+                headers: authHeaders
               });
+              
+              // Handle authentication errors
+              if (response.status === 401) {
+                window.location.href = '/login?error=true';
+                return;
+              }
               
               const data = await response.json();
               
@@ -276,11 +311,15 @@ try {
         try {
           const response = await fetch('/api/items', {
             method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
+            headers: authHeaders,
             body: JSON.stringify({ name, description })
           });
+          
+          // Handle authentication errors
+          if (response.status === 401) {
+            window.location.href = '/login?error=true';
+            return;
+          }
           
           const data = await response.json();
           
@@ -315,11 +354,15 @@ try {
         try {
           const response = await fetch('/api/items', {
             method: 'PUT',
-            headers: {
-              'Content-Type': 'application/json'
-            },
+            headers: authHeaders,
             body: JSON.stringify({ id: parseInt(id), name, description })
           });
+          
+          // Handle authentication errors
+          if (response.status === 401) {
+            window.location.href = '/login?error=true';
+            return;
+          }
           
           const data = await response.json();
           
