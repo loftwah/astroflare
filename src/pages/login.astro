@@ -56,8 +56,8 @@ const errorMessage = Astro.url.searchParams.get('error') ? 'Invalid password. Pl
       loginForm.addEventListener('submit', function(e) {
         e.preventDefault();
         
-        const passwordInput = document.getElementById('password') as HTMLInputElement;
-        if (!passwordInput) return;
+        const passwordInput = document.getElementById('password');
+        if (!passwordInput || !(passwordInput instanceof HTMLInputElement)) return;
         
         const password = passwordInput.value;
         
