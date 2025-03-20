@@ -1,48 +1,177 @@
-# Astro Starter Kit: Basics
+# Cloudflare Template
 
-```sh
-npm create astro@latest -- --template basics
+A modern web application template built with Astro 5, Tailwind CSS 4, Cloudflare Pages, and Cloudflare D1 database integration.
+
+![Astro](https://img.shields.io/badge/Astro-5.x-orange)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind-4.x-blue)
+![Cloudflare](https://img.shields.io/badge/Cloudflare-Pages-orange)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue)
+
+## 🚀 Features
+
+- **Full-stack Astro Website**: Built with Astro 5.x for blazing-fast performance
+- **Modern UI**: Using Tailwind CSS 4 for styling
+- **Cloudflare Integration**: Deployed on Cloudflare Pages with server-side rendering
+- **Database Support**: Uses Cloudflare D1 (SQLite) for data storage
+- **Authentication**: Simple authentication system included
+- **CRUD Operations**: Complete Create, Read, Update, Delete operations example
+- **API Testing**: Built-in endpoints for testing database connectivity
+
+## 📁 Project Structure
+
 ```
-
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/withastro/astro/tree/latest/examples/basics)
-[![Open with CodeSandbox](https://assets.codesandbox.io/github/button-edit-lime.svg)](https://codesandbox.io/p/sandbox/github/withastro/astro/tree/latest/examples/basics)
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/withastro/astro?devcontainer_path=.devcontainer/basics/devcontainer.json)
-
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
-
-![just-the-basics](https://github.com/withastro/astro/assets/2244813/a0a5533c-a856-4198-8470-2d67b1d7c554)
-
-## 🚀 Project Structure
-
-Inside of your Astro project, you'll see the following folders and files:
-
-```text
-/
+./
 ├── public/
 │   └── favicon.svg
 ├── src/
+│   ├── assets/
+│   │   ├── astro.svg
+│   │   └── background.svg
+│   ├── components/
+│   │   └── Welcome.astro
 │   ├── layouts/
 │   │   └── Layout.astro
-│   └── pages/
-│       └── index.astro
-└── package.json
+│   ├── pages/
+│   │   ├── api/
+│   │   │   ├── index.ts
+│   │   │   ├── items.ts
+│   │   │   └── test-items.ts
+│   │   ├── index.astro
+│   │   ├── items.astro
+│   │   └── login.astro
+│   ├── styles/
+│   │   └── global.css
+│   └── utils/
+│       └── auth.ts
+├── astro.config.mjs
+├── package.json
+├── tailwind.config.ts
+├── tsconfig.json
+└── wrangler.toml
 ```
 
-To learn more about the folder structure of an Astro project, refer to [our guide on project structure](https://docs.astro.build/en/basics/project-structure/).
+## 🧑‍💻 Getting Started
 
-## 🧞 Commands
+### Prerequisites
 
-All commands are run from the root of the project, from a terminal:
+- Node.js 18+
+- Cloudflare account (for D1 and Pages deployment)
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+### Local Development
 
-## 👀 Want to learn more?
+1. Clone the repository:
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+   ```bash
+   git clone https://github.com/loftwah/cloudflare-template.git
+   cd cloudflare-template
+   ```
+
+2. Install dependencies:
+
+   ```bash
+   npm install
+   ```
+
+3. Start the development server:
+
+   ```bash
+   npm run dev
+   ```
+
+4. Visit [http://localhost:4321](http://localhost:4321) in your browser.
+
+### Testing with D1 Database Locally
+
+1. Build the project:
+
+   ```bash
+   npm run build
+   ```
+
+2. Run the preview with D1 enabled:
+
+   ```bash
+   npm run preview -- --d1=DB
+   ```
+
+3. Visit [http://localhost:8788](http://localhost:8788) to test the application with D1.
+
+## 🔑 Authentication
+
+This template includes a simple authentication system:
+
+- Default password: `password123`
+- You can modify this in `src/utils/auth.ts`
+- Authentication can be passed via:
+  - Query parameter: `?auth=password123`
+  - Authorization header: `Bearer password123`
+
+## 📊 Database Structure
+
+The template uses a simple "items" table in D1:
+
+```sql
+CREATE TABLE IF NOT EXISTS items (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT,
+  description TEXT
+);
+```
+
+## 🚀 Deployment to Cloudflare
+
+### Setup D1 Database
+
+1. Create a D1 database in Cloudflare Dashboard:
+
+   - Go to Workers & Pages > D1
+   - Create a new database
+   - Note the database ID
+
+2. Update `wrangler.toml` with your database ID.
+
+### Deploy to Cloudflare Pages
+
+1. Push your code to GitHub.
+
+2. In Cloudflare Dashboard:
+   - Go to Workers & Pages > Create application
+   - Connect your GitHub repository
+   - Configure build settings:
+     - Build command: `npm run build`
+     - Build output directory: `dist`
+   - Add D1 binding:
+     - Variable name: `DB`
+     - Select your D1 database
+
+## 📝 API Endpoints
+
+- `GET /api`: Test database connection
+- `GET /api/items`: Get all items (requires auth)
+- `POST /api/items`: Create a new item (requires auth)
+- `PUT /api/items`: Update an item (requires auth)
+- `DELETE /api/items?id=1`: Delete an item (requires auth)
+- `GET /api/test-items`: Run CRUD tests (requires auth)
+
+## 🛠️ Commands
+
+| Command                      | Description                      |
+| ---------------------------- | -------------------------------- |
+| `npm run dev`                | Start development server         |
+| `npm run build`              | Build for production             |
+| `npm run preview`            | Preview production build locally |
+| `npm run preview -- --d1=DB` | Preview with D1 database enabled |
+
+## 📄 License
+
+MIT License - see the LICENSE file for details.
+
+## 👨‍💻 Author
+
+**Loftwah** - [GitHub](https://github.com/loftwah)
+
+## 🙏 Acknowledgments
+
+- [Astro](https://astro.build)
+- [Tailwind CSS](https://tailwindcss.com)
+- [Cloudflare](https://cloudflare.com)
