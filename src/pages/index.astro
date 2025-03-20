@@ -1,6 +1,25 @@
 ---
 import Layout from '../layouts/Layout.astro';
 ---
-<Layout title="Home">
-  <h1 class="text-4xl text-blue-500">Tailwind 4 Works!</h1>
+<Layout title="Cloudflare Items Manager">
+  <div class="container mx-auto px-4 py-8">
+    <h1 class="text-4xl font-bold text-blue-600 mb-6">Cloudflare D1 Demo</h1>
+    
+    <div class="bg-white shadow-md rounded-lg p-6">
+      <h2 class="text-2xl font-semibold text-gray-800 mb-4">Welcome to the D1 Items Manager</h2>
+      <p class="text-gray-600 mb-6">
+        This demo shows how to use Cloudflare D1 database with Astro.
+      </p>
+      
+      <div class="space-y-4">
+        <a href="/items" class="block w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 px-4 rounded-md text-center transition-colors">
+          Go to Items Manager
+        </a>
+        
+        <a href="/api/test-items" class="block w-full bg-green-600 hover:bg-green-700 text-white font-medium py-3 px-4 rounded-md text-center transition-colors">
+          Run CRUD Tests
+        </a>
+      </div>
+    </div>
+  </div>
 </Layout>
