@@ -1,0 +1,8 @@
+name = "my-astro-site"
+compatibility_date = "2025-03-19"
+pages_build_output_dir = "./dist"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "my-d1-db"
+database_id = "a108cafa-7d02-414c-ad04-914d408f6224"
