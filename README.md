@@ -1,4 +1,6 @@
-# Cloudflare Template
+# Astroflare
+
+![Astroflare](https://github.com/user-attachments/assets/a7ac3109-f151-45ac-90ea-49e947157c81)
 
 A modern web application template built with Astro 5, Tailwind CSS 4, Cloudflare Pages, and Cloudflare D1 database integration.
 
