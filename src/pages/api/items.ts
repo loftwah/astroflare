@@ -49,14 +49,19 @@ const sampleItems: Item[] = [
 ];
 
 // GET all items
-export async function GET({ locals }: APIContext) {
+export async function GET({ locals, request }: APIContext) {
+  // Add authentication check
+  if (!verifyAuth(request)) {
+    return unauthorizedResponse();
+  }
+
   try {
     // Try to get items from D1 if available
     const env = locals.runtime.env;
     let items: Item[] = [];
     
     if (env.DB) {
-      const result = await env.DB.prepare("SELECT * FROM items LIMIT 10").all();
+      const result = await env.DB.prepare("SELECT * FROM items ORDER BY id DESC LIMIT 50").all();
       items = result.results || [];
       
       // If no items in DB, use sample items
@@ -74,14 +79,23 @@ export async function GET({ locals }: APIContext) {
       items = sampleItems;
     }
     
-    return new Response(JSON.stringify(items), {
+    // MODIFIED: Return the expected structure with success and data properties
+    return new Response(JSON.stringify({
+      success: true,
+      data: items
+    }), {
       headers: {
         'Content-Type': 'application/json',
       },
     });
   } catch (error) {
     console.error('Error fetching items:', error);
-    return new Response(JSON.stringify({ error: 'Failed to fetch items' }), {
+    // MODIFIED: Return with success: false for consistency
+    return new Response(JSON.stringify({ 
+      success: false, 
+      error: 'Failed to fetch items',
+      message: error instanceof Error ? error.message : String(error)
+    }), {
       status: 500,
       headers: {
         'Content-Type': 'application/json',
