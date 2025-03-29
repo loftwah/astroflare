@@ -1,179 +1,144 @@
-# Astroflare
+# AstroFlare: Astro + Cloudflare Pages Template
+
+A modern web application template using Astro, Tailwind CSS, Cloudflare Pages, D1 Database, and R2 Storage.
 
 ![Astroflare](https://github.com/user-attachments/assets/a7ac3109-f151-45ac-90ea-49e947157c81)
 
-A modern web application template built with Astro 5, Tailwind CSS 4, Cloudflare Pages, and Cloudflare D1 database integration.
+## Features
 
-![Astro](https://img.shields.io/badge/Astro-5.x-orange)
-![Tailwind CSS](https://img.shields.io/badge/Tailwind-4.x-blue)
-![Cloudflare](https://img.shields.io/badge/Cloudflare-Pages-orange)
-![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue)
+- ⚡️ **Astro 5** - Fast, modern web framework
+- 🎨 **Tailwind CSS 4** - Utility-first CSS framework
+- 📊 **Cloudflare D1** - Serverless SQL database
+- 📦 **Cloudflare R2** - Object storage for static assets
+- 🔒 **Simple Auth** - Basic authentication for demo purposes
+- 🚀 **Cloudflare Pages** - Fast global deployments
 
-## 🚀 Features
-
-- **Full-stack Astro Website**: Built with Astro 5.x for blazing-fast performance
-- **Modern UI**: Using Tailwind CSS 4 for styling
-- **Cloudflare Integration**: Deployed on Cloudflare Pages with server-side rendering
-- **Database Support**: Uses Cloudflare D1 (SQLite) for data storage
-- **Authentication**: Simple authentication system included
-- **CRUD Operations**: Complete Create, Read, Update, Delete operations example
-- **API Testing**: Built-in endpoints for testing database connectivity
-
-## 📁 Project Structure
-
-```
-./
-├── public/
-│   └── favicon.svg
-├── src/
-│   ├── assets/
-│   │   ├── astro.svg
-│   │   └── background.svg
-│   ├── components/
-│   │   └── Welcome.astro
-│   ├── layouts/
-│   │   └── Layout.astro
-│   ├── pages/
-│   │   ├── api/
-│   │   │   ├── index.ts
-│   │   │   ├── items.ts
-│   │   │   └── test-items.ts
-│   │   ├── index.astro
-│   │   ├── items.astro
-│   │   └── login.astro
-│   ├── styles/
-│   │   └── global.css
-│   └── utils/
-│       └── auth.ts
-├── astro.config.mjs
-├── package.json
-├── tailwind.config.ts
-├── tsconfig.json
-└── wrangler.toml
-```
-
-## 🧑‍💻 Getting Started
+## Getting Started
 
 ### Prerequisites
 
 - Node.js 18+
-- Cloudflare account (for D1 and Pages deployment)
+- Cloudflare account with Pages, D1, and R2 access
 
-### Local Development
+### Setup
 
-1. Clone the repository:
-
-   ```bash
-   git clone https://github.com/loftwah/cloudflare-template.git
-   cd cloudflare-template
-   ```
-
+1. Clone this repository
 2. Install dependencies:
-
    ```bash
    npm install
    ```
+3. Configure Cloudflare bindings in `wrangler.toml`:
+   ```toml
+   [[d1_databases]]
+   binding = "DB"
+   database_name = "your-d1-database"
+   database_id = "your-d1-database-id"
 
-3. Start the development server:
+   [[r2_buckets]]
+   binding = "STORAGE"
+   bucket_name = "your-r2-bucket"
+   ```
 
+4. Create D1 database tables:
+   ```bash
+   wrangler d1 execute your-d1-database --file=schema.sql
+   ```
+
+5. Upload test image to R2:
+   ```bash
+   npm run test-r2
+   ```
+
+6. Start development server:
    ```bash
    npm run dev
    ```
 
-4. Visit [http://localhost:4321](http://localhost:4321) in your browser.
+## R2 Storage Usage
 
-### Testing with D1 Database Locally
+This template includes R2 storage integration for serving large static assets.
 
-1. Build the project:
+### Uploading Files to R2
 
-   ```bash
-   npm run build
-   ```
+Use the built-in upload utility:
 
-2. Run the preview with D1 enabled:
+```bash
+# Upload a file to R2
+npm run upload-to-r2 path/to/local/file path/in/r2 -- --remote
 
-   ```bash
-   npm run preview -- --d1=DB
-   ```
+# Example
+npm run upload-to-r2 src/assets/images/myimage.jpg images/myimage.jpg -- --remote
+```
 
-3. Visit [http://localhost:8788](http://localhost:8788) to test the application with D1.
+### Referencing R2 Assets
 
-## 🔑 Authentication
+In your Astro components or HTML, reference assets using the `/storage/` path prefix:
 
-This template includes a simple authentication system:
+```astro
+<img src="/storage/images/astroflare.jpg" alt="AstroFlare" />
+```
 
-- Default password: `password123`
-- You can modify this in `src/utils/auth.ts`
-- Authentication can be passed via:
-  - Query parameter: `?auth=password123`
-  - Authorization header: `Bearer password123`
+### How R2 Integration Works
 
-## 📊 Database Structure
+1. Static assets are stored in Cloudflare R2 bucket
+2. An Astro API route (`src/pages/storage/[...path].ts`) handles requests to `/storage/*` paths
+3. The route fetches the requested file from R2 and serves it with proper headers
+4. Your Astro site references these assets using the `/storage/path/to/file` URL pattern
 
-The template uses a simple "items" table in D1:
+## D1 Database Usage
+
+The template includes a simple CRUD application to demonstrate D1 database usage.
+
+### Database Schema
 
 ```sql
 CREATE TABLE IF NOT EXISTS items (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  name TEXT,
-  description TEXT
+  name TEXT NOT NULL,
+  description TEXT,
+  created_at TEXT DEFAULT CURRENT_TIMESTAMP
 );
 ```
 
-## 🚀 Deployment to Cloudflare
+### Accessing D1 in Astro
 
-### Setup D1 Database
+In Astro pages and API routes, access D1 via:
 
-1. Create a D1 database in Cloudflare Dashboard:
+```typescript
+const db = Astro.locals.runtime.env.DB;
+const results = await db.prepare("SELECT * FROM items").all();
+```
 
-   - Go to Workers & Pages > D1
-   - Create a new database
-   - Note the database ID
+## Authentication
 
-2. Update `wrangler.toml` with your database ID.
+This template includes a simple authentication mechanism for demonstration purposes.
 
-### Deploy to Cloudflare Pages
+⚠️ **Security Warning**: The basic password authentication included is NOT SECURE for production applications exposed to the internet. It's suitable only for demos or internal tools protected by other means.
 
-1. Push your code to GitHub.
+For production applications, consider using:
+- Cloudflare Access
+- JWT authentication
+- Auth providers like Auth0, Clerk, etc.
 
-2. In Cloudflare Dashboard:
-   - Go to Workers & Pages > Create application
-   - Connect your GitHub repository
-   - Configure build settings:
-     - Build command: `npm run build`
-     - Build output directory: `dist`
-   - Add D1 binding:
-     - Variable name: `DB`
-     - Select your D1 database
+## Available Commands
 
-## 📝 API Endpoints
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run preview` - Preview production build locally
+- `npm run upload-to-r2` - Upload files to R2
+- `npm run test-r2` - Upload test image to R2
+- `npm run r2-help` - Show R2 commands help
 
-- `GET /api`: Test database connection
-- `GET /api/items`: Get all items (requires auth)
-- `POST /api/items`: Create a new item (requires auth)
-- `PUT /api/items`: Update an item (requires auth)
-- `DELETE /api/items?id=1`: Delete an item (requires auth)
-- `GET /api/test-items`: Run CRUD tests (requires auth)
+## Deployment
 
-## 🛠️ Commands
+1. Set up a new Cloudflare Pages project
+2. Connect your GitHub repository
+3. Configure build settings:
+   - Build command: `npm run build`
+   - Build output directory: `dist`
+4. Add required environment variables
+5. Set up D1 and R2 bindings in Cloudflare Pages dashboard
 
-| Command                      | Description                      |
-| ---------------------------- | -------------------------------- |
-| `npm run dev`                | Start development server         |
-| `npm run build`              | Build for production             |
-| `npm run preview`            | Preview production build locally |
-| `npm run preview -- --d1=DB` | Preview with D1 database enabled |
+## License
 
-## 📄 License
-
-MIT License - see the LICENSE file for details.
-
-## 👨‍💻 Author
-
-**Loftwah** - [GitHub](https://github.com/loftwah)
-
-## 🙏 Acknowledgments
-
-- [Astro](https://astro.build)
-- [Tailwind CSS](https://tailwindcss.com)
-- [Cloudflare](https://cloudflare.com)
+MIT

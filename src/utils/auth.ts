@@ -1,4 +1,7 @@
 // Basic authentication utility
+// Using hardcoded password for development and environment variable for production
+
+// This password is used for development only
 const BASIC_PASSWORD = "password123";
 
 /**
@@ -49,4 +52,4 @@ export function redirectToLogin(): Response {
       "Location": "/login"
     }
   });
-} 
+}

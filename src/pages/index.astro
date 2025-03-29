@@ -1,45 +1,111 @@
 ---
 import Layout from '../layouts/Layout.astro';
 
-// Get the auth parameter to add to links
-const authParam = Astro.url.searchParams.get('auth') || '';
-const isAuthenticated = !!authParam;
+// Assuming astroflare.jpg is uploaded to R2 at images/astroflare.jpg
+const imageUrl = "/storage/images/astroflare.jpg";
+// Image dimensions for proper aspect ratio handling
+const imageWidth = 1280;
+const imageHeight = 720;
+const githubUrl = "https://github.com/loftwah/astroflare";
+
+// Optional feature flags
+const showLoginLink = false;
 ---
 
-<Layout title="Cloudflare Items Manager">
-  <div class="container mx-auto px-4 py-8">
-    <header class="flex justify-between items-center mb-6">
-      <h1 class="text-4xl font-bold text-blue-600">Cloudflare D1 Demo</h1>
-      {isAuthenticated ? (
-        <a href="/login" class="text-red-600 hover:text-red-800">Logout</a>
-      ) : (
-        <a href="/login" class="text-indigo-600 hover:text-indigo-800">Login</a>
-      )}
-    </header>
-    
-    <div class="bg-white shadow-md rounded-lg p-6">
-      <h2 class="text-2xl font-semibold text-gray-800 mb-4">Welcome to the D1 Items Manager</h2>
-      <p class="text-gray-600 mb-6">
-        This demo shows how to use Cloudflare D1 database with Astro.
-      </p>
+<Layout title="AstroFlare: Astro + Cloudflare Template">
+  <main class="min-h-screen bg-gradient-to-br from-indigo-100 via-purple-100 to-pink-100 flex items-center justify-center p-4 sm:p-6 md:p-8">
+    <div class="max-w-6xl w-full bg-white rounded-xl shadow-xl overflow-hidden flex flex-col md:flex-row">
       
-      <div class="space-y-4">
-        {isAuthenticated ? (
-          <>
-            <a href={`/items?auth=${authParam}`} class="block w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 px-4 rounded-md text-center transition-colors">
-              Go to Items Manager
-            </a>
-            
-            <a href={`/api/test-items?auth=${authParam}`} class="block w-full bg-green-600 hover:bg-green-700 text-white font-medium py-3 px-4 rounded-md text-center transition-colors">
-              Run CRUD Tests
-            </a>
-          </>
-        ) : (
-          <div class="bg-blue-50 border border-blue-200 text-blue-800 p-4 rounded-md">
-            <p>Please <a href="/login" class="font-medium underline">login</a> to access the Items Manager.</p>
+      <!-- Image Section - Better responsive handling -->
+      <div class="md:w-1/2 lg:w-3/5 relative h-64 sm:h-80 md:h-auto">
+        <img 
+          src={imageUrl} 
+          alt="AstroFlare Showcase" 
+          width={imageWidth}
+          height={imageHeight}
+          class="w-full h-full object-cover"
+          loading="lazy" 
+        />
+        
+        <!-- Optional: Add a subtle overlay with logo or text -->
+        <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-t from-black/40 to-transparent flex items-end p-4 md:hidden">
+          <h2 class="text-white text-xl font-bold">AstroFlare</h2>
+        </div>
+      </div>
+
+      <!-- Content Section - Improved spacing and readability -->
+      <div class="p-6 md:p-8 md:w-1/2 lg:w-2/5 flex flex-col justify-center">
+        <div class="space-y-4 mb-8 text-center">
+          <h1 class="text-3xl md:text-4xl font-bold text-gray-900">
+            Welcome to <span class="text-indigo-600">AstroFlare</span>
+          </h1>
+          
+          <p class="text-gray-600 text-lg">
+            A template for building modern web applications using Astro, Tailwind CSS, 
+            and Cloudflare's powerful ecosystem.
+          </p>
+        </div>
+        
+        <div class="space-y-3 mb-8 max-w-md mx-auto">
+          <div class="flex items-start text-gray-700">
+            <svg class="w-5 h-5 mr-3 text-green-500 mt-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+            <span><strong>Astro 5</strong> – High-performance islands architecture with zero JS by default</span>
           </div>
-        )}
+          
+          <div class="flex items-start text-gray-700">
+            <svg class="w-5 h-5 mr-3 text-green-500 mt-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+            <span><strong>Tailwind CSS 4</strong> – Utility-first styling with improved performance</span>
+          </div>
+          
+          <div class="flex items-start text-gray-700">
+            <svg class="w-5 h-5 mr-3 text-green-500 mt-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+            <span><strong>Cloudflare D1</strong> – Serverless SQL database with global replication</span>
+          </div>
+          
+          <div class="flex items-start text-gray-700">
+            <svg class="w-5 h-5 mr-3 text-green-500 mt-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+            <span><strong>Cloudflare R2</strong> – S3-compatible object storage for media and assets</span>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap gap-4 justify-center">
+          <a 
+            href="/items" 
+            class="px-5 py-2.5 bg-indigo-600 text-white font-medium rounded-lg shadow hover:bg-indigo-700 transition duration-200 focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2"
+          >
+            D1 Demo
+          </a>
+          
+          <a 
+            href="/r2-test" 
+            class="px-5 py-2.5 bg-purple-600 text-white font-medium rounded-lg shadow hover:bg-purple-700 transition duration-200 focus:ring-2 focus:ring-purple-400 focus:ring-offset-2"
+          >
+            R2 Demo
+          </a>
+          
+          <a 
+            href={githubUrl} 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            class="px-5 py-2.5 bg-gray-800 text-white font-medium rounded-lg shadow hover:bg-gray-900 transition duration-200 focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 inline-flex items-center"
+          >
+            <svg class="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.2 11.38.6.1.83-.26.83-.57 0-.28 0-1.03-.02-2.03-3.33.72-4.03-1.6-4.03-1.6-.55-1.4-1.34-1.77-1.34-1.77-1.08-.74.1-.73.1-.73 1.2.08 1.84 1.23 1.84 1.23 1.07 1.84 2.8 1.3 3.5 1 .1-.78.42-1.3.76-1.6-2.67-.3-5.47-1.34-5.47-5.93 0-1.32.47-2.4 1.23-3.24-.12-.3-.53-1.52.12-3.18 0 0 1-.32 3.3 1.23a11.5 11.5 0 0 1 3-.4c1.02.01 2.04.14 3 .4 2.28-1.55 3.3-1.23 3.3-1.23.65 1.66.24 2.88.12 3.18.77.84 1.23 1.92 1.23 3.24 0 4.6-2.8 5.63-5.48 5.92.42.36.81 1.1.81 2.22 0 1.6-.01 2.9-.01 3.3 0 .31.2.68.82.56C20.56 21.8 24 17.3 24 12c0-6.63-5.37-12-12-12"/></svg>
+            GitHub
+          </a>
+          
+          {showLoginLink && 
+            <a href="/login" class="text-indigo-600 hover:text-indigo-800 px-5 py-2.5 font-medium">
+              Login
+            </a>
+          }
+        </div>
       </div>
     </div>
-  </div>
+  </main>
+  
+  <footer class="py-6 bg-white border-t border-gray-100">
+    <div class="container mx-auto px-4 text-center text-gray-500 text-sm">
+      <p>Built with AstroFlare Template • <a href="https://astro.build" target="_blank" rel="noopener noreferrer" class="text-indigo-500 hover:text-indigo-600">Astro</a> + <a href="https://developers.cloudflare.com" target="_blank" rel="noopener noreferrer" class="text-indigo-500 hover:text-indigo-600">Cloudflare</a></p>
+    </div>
+  </footer>
 </Layout>
