@@ -2,7 +2,14 @@ name = "cloudflare-template"
 compatibility_date = "2025-03-19"
 pages_build_output_dir = "./dist"
 
+# D1 Database binding
 [[d1_databases]]
 binding = "DB"
 database_name = "my-d1-db"
 database_id = "a108cafa-7d02-414c-ad04-914d408f6224"
+
+# R2 Storage binding for assets
+[[r2_buckets]]
+binding = "STORAGE"
+bucket_name = "astroflare"
+preview_bucket_name = "astroflare" # Use the same bucket for preview

@@ -1,0 +1,33 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="R2 Storage Test">
+  <main class="container mx-auto p-4">
+    <h1 class="text-4xl font-bold mb-8">Cloudflare R2 Storage Test</h1>
+    
+    <div class="mb-8">
+      <h2 class="text-2xl font-semibold mb-4">Using R2 for large static assets</h2>
+      <p class="mb-4">This image is being served from Cloudflare R2 storage:</p>
+      
+      <div class="border rounded-lg p-4 bg-gray-50">
+        <img 
+          src="/storage/images/astroflare.jpg" 
+          alt="AstroFlare" 
+          class="max-w-md mx-auto rounded-lg shadow-md"
+        />
+      </div>
+    </div>
+    
+    <div class="mb-8">
+      <h2 class="text-2xl font-semibold mb-4">How it works</h2>
+      <p>Using Cloudflare R2 with Astro and Pages:</p>
+      <ul class="list-disc pl-6 space-y-2 my-4">
+        <li>Configure R2 bucket in wrangler.toml</li>
+        <li>Create a Pages Function to handle requests to /storage/*</li>
+        <li>Upload files to your R2 bucket</li>
+        <li>Reference assets using the /storage/ path prefix</li>
+      </ul>
+    </div>
+  </main>
+</Layout> 

@@ -11,5 +11,19 @@ export default defineConfig({
   // Enable SSR for Functions
   output: "server",
 
-  adapter: cloudflare()
+  adapter: cloudflare({
+    // Important: Use advanced mode for proper Functions support
+    mode: "advanced",
+    
+    // Let Pages manage the Functions directory structure
+    runtime: {
+      mode: "local",
+      persistTo: "./functions"
+    },
+    
+    // Platform proxy for local dev with R2
+    platformProxy: {
+      enabled: true,
+    }
+  })
 });
