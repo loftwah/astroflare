@@ -5,19 +5,11 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
-    "preview": "npm run r2-upload-test-image-local && wrangler pages dev ./dist",
+    "preview": "wrangler pages dev ./dist",
     "astro": "astro",
     "upload-to-r2": "node src/utils/upload-to-r2.js",
     "test-r2": "node upload-test-image.js --remote",
-    "r2-upload-test-image": "node upload-test-image.js",
-    "r2-upload-test-image-remote": "node upload-test-image.js --remote",
-    "r2-upload-test-image-local": "node upload-test-image.js --local",
-    "r2-help": "echo '\n📦 R2 Storage Commands:\n\n  npm run r2-upload-test-image-remote - Upload test image to LIVE R2 bucket\n  npm run r2-upload-test-image-local  - Upload test image to LOCAL R2 simulation\n  npm run upload-to-r2 [file] [r2path] -- --remote - Upload any file to LIVE R2\n  npm run upload-to-r2 [file] [r2path] -- --local  - Upload any file to LOCAL R2\n  npm run r2-help                     - Show this help message\n'",
-    "r2-setup": "node r2-setup.js",
-    "r2-fix": "npm run r2-upload-test-image-local && wrangler pages dev ./dist",
-    "r2-direct": "node upload-r2-direct.js",
-    "r2-super-fix": "npm run r2-direct && npm run build && npm run preview",
-    "r2-debug": "node debug-r2.js"
+    "r2-help": "echo '\n📦 R2 Storage Commands:\n\n  npm run test-r2              - Upload test image to R2 bucket\n  npm run upload-to-r2 [file] [r2path] -- --remote - Upload any file to R2\n  npm run upload-to-r2 [file] [r2path] -- --local  - Upload any file to local R2\n  npm run r2-help              - Show this help message\n'"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^12.2.4",

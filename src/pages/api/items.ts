@@ -1,51 +1,97 @@
 import type { APIContext } from 'astro';
 import { verifyAuth, unauthorizedResponse } from '../../utils/auth';
 
-interface CloudflareLocals {
-  runtime: {
-    env: {
-      DB: any; // D1 database
-    };
-  };
+// Define proper types for Cloudflare environment
+interface Env {
+  DB: any; // D1 database
+  STORAGE?: any;
+}
+
+interface CloudflareRuntime {
+  env: Env;
+}
+
+// Extend the Locals interface
+declare namespace App {
+  interface Locals {
+    runtime: CloudflareRuntime;
+  }
 }
 
 interface Item {
   id?: number;
   name: string;
   description: string;
+  image?: string;
+  [key: string]: any;
 }
 
-// GET all items
-export async function GET({ locals, request }: APIContext & { locals: CloudflareLocals }) {
-  // Check authentication
-  if (!verifyAuth(request)) {
-    return unauthorizedResponse();
+// We'll use these sample items when no database is available
+const sampleItems: Item[] = [
+  {
+    id: 1,
+    name: "Test Item 1",
+    description: "This is a test item with an image from R2 storage",
+    image: "/storage/images/astroflare.jpg"
+  },
+  {
+    id: 2,
+    name: "Test Item 2",
+    description: "Another test item with the same image from R2 storage",
+    image: "/storage/images/astroflare.jpg"
+  },
+  {
+    id: 3,
+    name: "Test Item 3",
+    description: "Yet another test item with an image from R2",
+    image: "/storage/images/astroflare.jpg"
   }
-  
+];
+
+// GET all items
+export async function GET({ locals }: APIContext) {
   try {
-    const { results } = await locals.runtime.env.DB.prepare("SELECT * FROM items").all();
+    // Try to get items from D1 if available
+    const env = locals.runtime.env;
+    let items: Item[] = [];
     
-    return new Response(JSON.stringify({
-      success: true,
-      data: results
-    }), {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
+    if (env.DB) {
+      const result = await env.DB.prepare("SELECT * FROM items LIMIT 10").all();
+      items = result.results || [];
+      
+      // If no items in DB, use sample items
+      if (items.length === 0) {
+        items = sampleItems;
+      }
+      
+      // Add image property to any DB items that don't have it
+      items = items.map((item: Item) => ({
+        ...item,
+        image: item.image || "/storage/images/astroflare.jpg"
+      }));
+    } else {
+      // No DB available, use sample items
+      items = sampleItems;
+    }
+    
+    return new Response(JSON.stringify(items), {
+      headers: {
+        'Content-Type': 'application/json',
+      },
     });
   } catch (error) {
     console.error('Error fetching items:', error);
-    return new Response(JSON.stringify({ 
-      success: false, 
-      error: error instanceof Error ? error.message : String(error)
-    }), {
+    return new Response(JSON.stringify({ error: 'Failed to fetch items' }), {
       status: 500,
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        'Content-Type': 'application/json',
+      },
     });
   }
 }
 
 // POST - create a new item
-export async function POST({ request, locals }: APIContext & { locals: CloudflareLocals }) {
+export async function POST({ request, locals }: APIContext) {
   // Check authentication
   if (!verifyAuth(request)) {
     return unauthorizedResponse();
@@ -94,7 +140,7 @@ export async function POST({ request, locals }: APIContext & { locals: Cloudflar
 }
 
 // PUT - update an existing item
-export async function PUT({ request, locals }: APIContext & { locals: CloudflareLocals }) {
+export async function PUT({ request, locals }: APIContext) {
   // Check authentication
   if (!verifyAuth(request)) {
     return unauthorizedResponse();
@@ -143,7 +189,7 @@ export async function PUT({ request, locals }: APIContext & { locals: Cloudflare
 }
 
 // DELETE - delete an item
-export async function DELETE({ request, locals }: APIContext & { locals: CloudflareLocals }) {
+export async function DELETE({ request, locals }: APIContext) {
   // Check authentication
   if (!verifyAuth(request)) {
     return unauthorizedResponse();

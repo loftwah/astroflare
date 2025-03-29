@@ -3,31 +3,60 @@ import Layout from "../layouts/Layout.astro";
 ---
 
 <Layout title="R2 Storage Test">
-  <main class="container mx-auto p-4">
-    <h1 class="text-4xl font-bold mb-8">Cloudflare R2 Storage Test</h1>
+  <main class="container mx-auto p-6 max-w-4xl">
+    <h1 class="text-4xl font-bold mb-8 text-center text-indigo-800">Cloudflare R2 Storage Test</h1>
     
-    <div class="mb-8">
-      <h2 class="text-2xl font-semibold mb-4">Using R2 for large static assets</h2>
-      <p class="mb-4">This image is being served from Cloudflare R2 storage:</p>
+    <div class="mb-12 bg-white rounded-xl shadow-lg overflow-hidden">
+      <div class="p-6">
+        <h2 class="text-2xl font-semibold mb-4 text-gray-800">Using R2 for Static Assets</h2>
+        <p class="mb-4 text-gray-600">This image is being served from Cloudflare R2 storage:</p>
+      </div>
       
-      <div class="border rounded-lg p-4 bg-gray-50">
+      <div class="border-t border-gray-100 bg-gray-50 p-6 flex justify-center">
         <img 
           src="/storage/images/astroflare.jpg" 
           alt="AstroFlare" 
-          class="max-w-md mx-auto rounded-lg shadow-md"
+          class="max-w-md rounded-lg shadow-md"
+          onerror="this.parentNode.innerHTML += '<p class=\'mt-4 text-red-600 text-center\'>❌ Error: Image failed to load</p>';"
+          onload="this.parentNode.innerHTML += '<p class=\'mt-4 text-green-600 text-center\'>✅ Success: Image loaded from R2</p>';"
         />
       </div>
     </div>
     
-    <div class="mb-8">
-      <h2 class="text-2xl font-semibold mb-4">How it works</h2>
-      <p>Using Cloudflare R2 with Astro and Pages:</p>
-      <ul class="list-disc pl-6 space-y-2 my-4">
-        <li>Configure R2 bucket in wrangler.toml</li>
-        <li>Create a Pages Function to handle requests to /storage/*</li>
-        <li>Upload files to your R2 bucket</li>
-        <li>Reference assets using the /storage/ path prefix</li>
-      </ul>
+    <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+      <div class="p-6">
+        <h2 class="text-2xl font-semibold mb-4 text-gray-800">How R2 Integration Works</h2>
+        
+        <div class="space-y-4">
+          <div class="border-l-4 border-indigo-500 pl-4">
+            <h3 class="font-semibold text-lg text-gray-800">Configuration</h3>
+            <p class="text-gray-600">R2 bucket is configured in wrangler.toml with the binding name STORAGE.</p>
+          </div>
+          
+          <div class="border-l-4 border-purple-500 pl-4">
+            <h3 class="font-semibold text-lg text-gray-800">API Route</h3>
+            <p class="text-gray-600">An Astro API route handles requests to /storage/* paths and serves files from R2.</p>
+          </div>
+          
+          <div class="border-l-4 border-pink-500 pl-4">
+            <h3 class="font-semibold text-lg text-gray-800">Asset Usage</h3>
+            <p class="text-gray-600">Reference assets using the /storage/ path prefix in your HTML or Astro components.</p>
+            <pre class="bg-gray-100 p-3 rounded mt-2 overflow-x-auto"><code>&lt;img src="/storage/images/astroflare.jpg" alt="AstroFlare" /&gt;</code></pre>
+          </div>
+          
+          <div class="border-l-4 border-blue-500 pl-4">
+            <h3 class="font-semibold text-lg text-gray-800">Uploading Files</h3>
+            <p class="text-gray-600">Use the upload utility to add files to your R2 bucket:</p>
+            <pre class="bg-gray-100 p-3 rounded mt-2 overflow-x-auto"><code>npm run upload-to-r2 path/to/local/file images/destination.jpg -- --remote</code></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="mt-8 text-center">
+      <a href="/" class="inline-block px-6 py-3 bg-indigo-600 text-white font-semibold rounded-lg shadow hover:bg-indigo-700 transition duration-200">
+        Back to Home
+      </a>
     </div>
   </main>
 </Layout> 

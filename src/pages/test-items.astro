@@ -25,35 +25,70 @@ const testItems = [
 ---
 
 <Layout title="Test Items with R2 Storage">
-  <main class="container mx-auto p-4">
-    <h1 class="text-3xl font-bold mb-6">Test Items with R2 Storage</h1>
+  <main class="container mx-auto p-6 max-w-6xl">
+    <h1 class="text-3xl font-bold mb-6 text-center text-indigo-800">Test Items with R2 Storage</h1>
     
-    <p class="mb-6">This page demonstrates using R2 storage for item images. All images are served from Cloudflare R2 bucket.</p>
+    <p class="mb-8 text-center text-gray-600 max-w-2xl mx-auto">
+      This page demonstrates using R2 storage for item images. All images are served 
+      from Cloudflare R2 bucket through the /storage/* API route.
+    </p>
     
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
       {testItems.map(item => (
-        <div class="border rounded-lg overflow-hidden shadow-md">
-          <img 
-            src={item.image} 
-            alt={item.name} 
-            class="w-full h-48 object-cover"
-          />
-          <div class="p-4">
-            <h2 class="text-xl font-semibold mb-2">{item.name}</h2>
-            <p class="text-gray-700">{item.description}</p>
+        <div class="bg-white rounded-xl overflow-hidden shadow-lg transition-transform hover:scale-105 duration-300">
+          <div class="h-48 overflow-hidden">
+            <img 
+              src={item.image} 
+              alt={item.name} 
+              class="w-full h-full object-cover transition-transform hover:scale-110 duration-500"
+              loading="lazy"
+              onerror="this.src='/placeholder.jpg'; this.parentNode.classList.add('bg-gray-100');"
+            />
+          </div>
+          <div class="p-6">
+            <h2 class="text-xl font-semibold mb-3 text-gray-800">{item.name}</h2>
+            <p class="text-gray-600">{item.description}</p>
+          </div>
+          <div class="px-6 py-4 bg-gray-50 border-t border-gray-100">
+            <span class="inline-block bg-indigo-100 text-indigo-800 rounded-full px-3 py-1 text-sm font-semibold">
+              R2 Image
+            </span>
           </div>
         </div>
       ))}
     </div>
     
-    <div class="mt-8 p-4 bg-gray-50 rounded-lg border">
-      <h2 class="text-xl font-semibold mb-2">How R2 Storage Works</h2>
-      <ul class="list-disc ml-6 space-y-2">
-        <li>Images are stored in Cloudflare R2 bucket</li>
-        <li>Served via the <code class="bg-gray-200 px-1 rounded">/storage/*</code> path</li>
-        <li>Handled by Cloudflare Functions</li>
-        <li>Works in both development and production</li>
-      </ul>
+    <div class="bg-white rounded-xl shadow-lg overflow-hidden max-w-3xl mx-auto">
+      <div class="p-6">
+        <h2 class="text-xl font-semibold mb-4 text-gray-800">How R2 Storage Works</h2>
+        <ul class="space-y-3">
+          <li class="flex items-start">
+            <svg class="w-5 h-5 text-green-500 mt-1 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+            <span class="text-gray-600">Images are stored in Cloudflare R2 bucket</span>
+          </li>
+          <li class="flex items-start">
+            <svg class="w-5 h-5 text-green-500 mt-1 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+            <span class="text-gray-600">Served via the <code class="bg-gray-200 px-1 rounded text-sm">/storage/*</code> path in Astro API routes</span>
+          </li>
+          <li class="flex items-start">
+            <svg class="w-5 h-5 text-green-500 mt-1 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+            <span class="text-gray-600">Handles proper content types and caching headers</span>
+          </li>
+          <li class="flex items-start">
+            <svg class="w-5 h-5 text-green-500 mt-1 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+            <span class="text-gray-600">Works in both development and production</span>
+          </li>
+        </ul>
+      </div>
+      <div class="px-6 py-4 bg-gray-50 border-t border-gray-100">
+        <pre class="bg-gray-100 p-3 rounded overflow-x-auto text-sm"><code>&lt;img src="/storage/images/astroflare.jpg" alt="Image from R2" /&gt;</code></pre>
+      </div>
+    </div>
+    
+    <div class="mt-8 text-center">
+      <a href="/" class="inline-block px-6 py-3 bg-indigo-600 text-white font-semibold rounded-lg shadow hover:bg-indigo-700 transition duration-200">
+        Back to Home
+      </a>
     </div>
   </main>
 </Layout> 
