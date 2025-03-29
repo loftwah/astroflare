@@ -9,10 +9,14 @@ const { title } = Astro.props;
     <meta name="description" content="AstroFlare - A modern web application template using Astro and Cloudflare" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>{title}</title>
-    <!-- Optional: Add meta tags for social sharing -->
+    <!-- Open Graph / Social Media Meta Tags -->
     <meta property="og:title" content={title} />
     <meta property="og:description" content="Build modern web applications with Astro and Cloudflare" />
     <meta property="og:type" content="website" />
+    <meta property="og:image" content="/storage/images/astroflare.jpg" />
+    <meta property="og:image:width" content="1280" />
+    <meta property="og:image:height" content="720" />
+    <meta property="twitter:card" content="summary_large_image" />
     <!-- Preload critical assets if needed -->
   </head>
   <body class="min-h-screen flex flex-col">
