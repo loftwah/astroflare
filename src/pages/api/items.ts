@@ -50,8 +50,8 @@ const sampleItems: Item[] = [
 
 // GET all items
 export async function GET({ locals, request }: APIContext) {
-  // Add authentication check
-  if (!verifyAuth(request)) {
+  // Add authentication check with locals
+  if (!verifyAuth(request, locals)) {
     return unauthorizedResponse();
   }
 
@@ -107,7 +107,7 @@ export async function GET({ locals, request }: APIContext) {
 // POST - create a new item
 export async function POST({ request, locals }: APIContext) {
   // Check authentication
-  if (!verifyAuth(request)) {
+  if (!verifyAuth(request, locals)) {
     return unauthorizedResponse();
   }
   
@@ -156,7 +156,7 @@ export async function POST({ request, locals }: APIContext) {
 // PUT - update an existing item
 export async function PUT({ request, locals }: APIContext) {
   // Check authentication
-  if (!verifyAuth(request)) {
+  if (!verifyAuth(request, locals)) {
     return unauthorizedResponse();
   }
   
@@ -205,7 +205,7 @@ export async function PUT({ request, locals }: APIContext) {
 // DELETE - delete an item
 export async function DELETE({ request, locals }: APIContext) {
   // Check authentication
-  if (!verifyAuth(request)) {
+  if (!verifyAuth(request, locals)) {
     return unauthorizedResponse();
   }
   

@@ -3,9 +3,11 @@ import Layout from '../layouts/Layout.astro';
 import { verifyAuth, redirectToLogin } from '../utils/auth';
 
 // Check for authentication
-const isAuthenticated = verifyAuth(Astro.request);
+const isAuthenticated = verifyAuth(Astro.request, Astro.locals);
 if (!isAuthenticated) {
-  return redirectToLogin();
+  // Check if there was an auth attempt that failed
+  const authAttemptFailed = Astro.url.searchParams.has('auth');
+  return redirectToLogin(authAttemptFailed);
 }
 
 // Get all items from the database
@@ -170,9 +172,10 @@ const authParam = new URL(Astro.request.url).searchParams.get('auth') || '';
     const testResults = document.getElementById('testResults');
     const closeTestResults = document.getElementById('closeTestResults');
 
-    // Authentication headers for API calls
+    // Use the passed auth parameter for API calls
+    const currentAuthParam = new URLSearchParams(window.location.search).get('auth') || authParam;
     const authHeaders = {
-      'Authorization': `Bearer ${authParam}`,
+      'Authorization': `Bearer ${currentAuthParam}`,
       'Content-Type': 'application/json'
     };
 
@@ -192,18 +195,11 @@ const authParam = new URL(Astro.request.url).searchParams.get('auth') || '';
     // Fetch all items
     async function fetchItems() {
       try {
-        // Make sure we're using the correct authentication
-        const currentAuthParam = new URLSearchParams(window.location.search).get('auth') || authParam;
-        const headers = {
-          'Authorization': `Bearer ${currentAuthParam}`,
-          'Content-Type': 'application/json'
-        };
-        
         const response = await fetch('/api/items', {
-          headers: headers
+          headers: authHeaders
         });
         
-        // Check for authentication error
+        // Handle authentication errors
         if (response.status === 401) {
           window.location.href = '/login?error=true';
           return;
@@ -304,16 +300,9 @@ const authParam = new URL(Astro.request.url).searchParams.get('auth') || '';
             if (!id) return;
             
             try {
-              // Make sure we're using the correct authentication
-              const currentAuthParam = new URLSearchParams(window.location.search).get('auth') || authParam;
-              const headers = {
-                'Authorization': `Bearer ${currentAuthParam}`,
-                'Content-Type': 'application/json'
-              };
-              
               const response = await fetch(`/api/items?id=${id}`, {
                 method: 'DELETE',
-                headers: headers
+                headers: authHeaders
               });
               
               // Handle authentication errors
@@ -357,16 +346,9 @@ const authParam = new URL(Astro.request.url).searchParams.get('auth') || '';
         const description = descriptionInput.value;
         
         try {
-          // Make sure we're using the correct authentication
-          const currentAuthParam = new URLSearchParams(window.location.search).get('auth') || authParam;
-          const headers = {
-            'Authorization': `Bearer ${currentAuthParam}`,
-            'Content-Type': 'application/json'
-          };
-          
           const response = await fetch('/api/items', {
             method: 'POST',
-            headers: headers,
+            headers: authHeaders,
             body: JSON.stringify({ name, description })
           });
           
@@ -410,16 +392,9 @@ const authParam = new URL(Astro.request.url).searchParams.get('auth') || '';
         const description = editDescription.value;
         
         try {
-          // Make sure we're using the correct authentication
-          const currentAuthParam = new URLSearchParams(window.location.search).get('auth') || authParam;
-          const headers = {
-            'Authorization': `Bearer ${currentAuthParam}`,
-            'Content-Type': 'application/json'
-          };
-          
           const response = await fetch('/api/items', {
             method: 'PUT',
-            headers: headers,
+            headers: authHeaders,
             body: JSON.stringify({ id: parseInt(id), name, description })
           });
           
@@ -471,15 +446,8 @@ const authParam = new URL(Astro.request.url).searchParams.get('auth') || '';
         testResults.innerHTML = 'Running database tests...';
         
         try {
-          // Make sure we're using the correct authentication
-          const currentAuthParam = new URLSearchParams(window.location.search).get('auth') || authParam;
-          const headers = {
-            'Authorization': `Bearer ${currentAuthParam}`,
-            'Content-Type': 'application/json'
-          };
-          
           const response = await fetch('/api/test-items', {
-            headers: headers
+            headers: authHeaders
           });
           
           // Handle authentication errors

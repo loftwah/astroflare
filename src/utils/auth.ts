@@ -1,25 +1,43 @@
 // Basic authentication utility
 // Using hardcoded password for development and environment variable for production
 
-// This password is used for development only
+// This is a fallback for development only
 const BASIC_PASSWORD = "password123";
+
+/**
+ * Get the expected password securely from environment or fallback.
+ */
+function getExpectedPassword(locals?: any): string {
+  // Try to get password from environment
+  const passwordFromEnv = locals?.runtime?.env?.PASSWORD;
+  
+  // If environment password exists, use it
+  if (passwordFromEnv) {
+    return passwordFromEnv;
+  }
+  
+  // Fallback to hardcoded password for development
+  return BASIC_PASSWORD;
+}
 
 /**
  * Verify the authentication from request headers or query parameters
  */
-export function verifyAuth(request: Request): boolean {
+export function verifyAuth(request: Request, locals?: any): boolean {
+  const expectedPassword = getExpectedPassword(locals);
+  
   // Check for auth in headers (for API calls)
   const authHeader = request.headers.get("Authorization");
   if (authHeader) {
     // Simple password-based auth
     const password = authHeader.replace("Bearer ", "");
-    return password === BASIC_PASSWORD;
+    return password === expectedPassword;
   }
   
   // Check for auth in URL (for browser access)
   const url = new URL(request.url);
   const password = url.searchParams.get("auth");
-  if (password === BASIC_PASSWORD) {
+  if (password === expectedPassword) {
     return true;
   }
   
@@ -45,11 +63,12 @@ export function unauthorizedResponse(): Response {
 /**
  * Create a redirect to login response
  */
-export function redirectToLogin(): Response {
+export function redirectToLogin(error: boolean = false): Response {
+  const location = error ? "/login?error=true" : "/login";
   return new Response(null, {
     status: 302,
     headers: {
-      "Location": "/login"
+      "Location": location
     }
   });
 }

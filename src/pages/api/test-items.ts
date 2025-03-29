@@ -10,8 +10,8 @@ interface CloudflareLocals {
 }
 
 export async function GET({ locals, request }: APIContext & { locals: CloudflareLocals }) {
-  // Check authentication
-  if (!verifyAuth(request)) {
+  // Check authentication with locals
+  if (!verifyAuth(request, locals)) {
     return unauthorizedResponse();
   }
   
