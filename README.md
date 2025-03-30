@@ -1,4 +1,4 @@
-# AstroFlare: Astro + Cloudflare Pages Template
+# Astroflare: Astro + Cloudflare Pages Template
 
 A modern web application template using Astro, Tailwind CSS, Cloudflare Pages, D1 Database, and R2 Storage.
 
@@ -75,7 +75,7 @@ npm run upload-to-r2 src/assets/images/myimage.jpg images/myimage.jpg -- --remot
 In your Astro components or HTML, reference assets using the `/storage/` path prefix:
 
 ```astro
-<img src="/storage/images/astroflare.jpg" alt="AstroFlare" />
+<img src="/storage/images/astroflare.jpg" alt="Astroflare" />
 ```
 
 ### How R2 Integration Works

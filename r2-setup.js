@@ -1,5 +1,5 @@
 /**
- * AstroFlare R2 Storage Setup
+ * Astroflare R2 Storage Setup
  * This script guides you through testing the R2 storage setup
  */
 
@@ -11,7 +11,7 @@ const rl = readline.createInterface({
   output: process.stdout
 });
 
-console.log('\n🚀 AstroFlare R2 Storage Setup 🚀\n');
+console.log('\n🚀 Astroflare R2 Storage Setup 🚀\n');
 console.log('This interactive guide will help you test your R2 storage setup.\n');
 
 console.log('Step 1: First, let\'s upload the test image to R2');

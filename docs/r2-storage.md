@@ -1,4 +1,4 @@
-# Using Cloudflare R2 Storage with AstroFlare
+# Using Cloudflare R2 Storage with Astroflare
 
 This project includes integration with Cloudflare R2 for storing and serving large static assets like images, videos, and files that might exceed the Cloudflare Pages size limits.
 
@@ -16,7 +16,7 @@ This project includes integration with Cloudflare R2 for storing and serving lar
 Use the `/storage/` path prefix to reference any asset stored in your R2 bucket:
 
 ```astro
-<img src="/storage/images/astroflare.jpg" alt="AstroFlare" />
+<img src="/storage/images/astroflare.jpg" alt="Astroflare" />
 ```
 
 ### Uploading Files to R2
